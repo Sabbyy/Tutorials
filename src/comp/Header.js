@@ -2,7 +2,9 @@ import React, { Component } from 'react'
 import { Menu, Container } from 'semantic-ui-react'
 
 export default class Header extends Component {
-  state = {}
+  state = {
+    activeItem: 'restaurants'
+  }
 
   handleItemClick = (e, { name }) => this.setState({ activeItem: name })
 

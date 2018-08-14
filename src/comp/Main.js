@@ -1,92 +1,21 @@
 import React from 'react'
 import { Container, Grid, Input } from 'semantic-ui-react'
 import RestaurantCard from './RestaurantCard';
+import { API_KEY } from '../constants'
+import axios from 'axios'
 
 export default class Header extends React.Component {
 
   state = {
     restaurants: [
       {
-        id: '124',
-        title: 'Kanchan2 Cuisine 124',
-        photo: 'http://placehold.it/250',
-        rating: 5,
-        serves: 'non veg',
-        opens: '12 AM',
-        closes: '12 PM',
-      },
-      {
-        id: '125',
-        title: 'Kanchan5 Cuisine 125',
-        photo: 'http://placehold.it/250',
-        rating: 2.5,
-        serves: 'veg and non veg',
-        opens: '12 AM',
-        closes: '11 PM',
-      },
-      {
-        id: '126',
-        title: 'Kanchan Cuisine 126',
-        photo: 'http://placehold.it/250',
-        rating: 2.5,
-        serves: 'veg and non veg',
-        opens: '12 AM',
-        closes: '12 PM',
-      },
-      {
-        id: '127',
-        title: 'Kanchan Cuisine 127',
-        photo: 'http://placehold.it/250',
-        rating: 2.5,
-        serves: 'veg and non veg',
-        opens: '12 AM',
-        closes: '12 PM',
-      },
-      {
-        id: '128',
-        title: 'Kanchan Cuisine 128',
-        photo: 'http://placehold.it/250',
-        rating: 3.5,
-        serves: 'veg and non veg',
-        opens: '12 AM',
-        closes: '12 PM',
-      },
-      {
-        id: '129',
-        title: 'Kanchan Cuisine 129',
-        photo: 'http://placehold.it/250',
-        rating: 2.5,
-        serves: 'veg and non veg',
-        opens: '12 AM',
-        closes: '12 PM',
-      },
-      {
-        id: '110',
-        title: 'Kanchan Cuisine 110',
-        photo: 'http://placehold.it/250',
-        rating: 1.5,
-        serves: 'veg and non veg',
-        opens: '1 AM',
-        closes: '12 PM',
-      },
-      {
-        id: '1231',
-        title: 'Kanchan Cuisine 231',
-        photo: 'http://placehold.it/250',
-        rating: 2.5,
-        serves: 'non veg',
-        opens: '12 AM',
-        closes: '12 PM',
-      },
-      {
-        id: '1232',
-        title: 'Kanchan Cuisine 232',
-        photo: 'http://placehold.it/250',
-        rating: 2.5,
-        serves: 'veg and non veg',
-        opens: '12 AM',
-        closes: '12 PM',
-      },
+        id: '124', // R.res_id
+        title: 'Kanchan2 Cuisine 124', // name
+        photo: 'http://placehold.it/250', //featured_image
+        rating: 5, //user_rating.aggregate_rating
+        serves: 'non veg', // cuisines
+        opens: '12 AM', // is_delivering_now
+      }
     ]
   }
 
@@ -97,16 +26,31 @@ export default class Header extends React.Component {
         <Input icon='search' placeholder='Search...' fluid />
         <br />
         <Grid stackable columns={4}>
-          {this.state.restaurants.map((restaurant) =>
-            <Grid.Column key={restaurant.id}>
-              <RestaurantCard
-                rest={restaurant}
-              />
+          {this.state.restaurants.map((restaurant, i) =>
+            <Grid.Column key={i}>
+              <RestaurantCard rest={restaurant.restaurant} />
             </Grid.Column>
           )}
         </Grid>
         <br />
       </Container>
     )
+  }
+
+  componentDidMount = () => {
+    axios.get('https://developers.zomato.com/api/v2.1/search?entity_id=14&entity_type=city&count=20&sort=rating&order=desc', {
+      headers: {
+        "user-key": API_KEY
+      }
+    })
+      .then((response) => {
+        console.log(response.data.restaurants);
+        this.setState({
+          restaurants: response.data.restaurants
+        })
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 }
